@@ -128,10 +128,14 @@ func processUserCommand(command string) {
 			GetArray(fields[1])
 		} else {
 			fmt.Printf("show is for fetching array details\n Usage:\n\tshow <array_name>\n")
-
 		}
 	case "del":
-		//TODO: delete array functionality
+		if fieldsLength == 2 {
+			DeleteArray(fields[1])
+		} else {
+			fmt.Printf("del is for deleting array from database\n Usage:\n\tdel <array_name>\n")
+		}
+
 	case "merge":
 		///TODO: merge two arrays functionality
 	default:

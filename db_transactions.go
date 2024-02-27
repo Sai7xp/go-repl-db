@@ -50,6 +50,21 @@ func CreateNewArray(arrayName string, arr []int) {
 
 }
 
+// Deletes an array with given arrName from database
+func DeleteArray(arrName string) {
+	defer WriteDataToFile()
+	mx.Lock()
+	defer mx.Unlock()
+	if _, doesExists := database[arrName]; doesExists {
+		/// remove key from map
+		delete(database, arrName)
+		fmt.Println("DELETED")
+	} else {
+		errMessage := fmt.Sprintf("Error: \"%s\" does not exist", arrName)
+		fmt.Println(errMessage)
+	}
+}
+
 // trigger when user enters `show array_name` command
 func GetArray(arrayName string) {
 	mx.Lock()
