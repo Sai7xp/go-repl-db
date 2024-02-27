@@ -7,6 +7,8 @@ package main
 
 import (
 	"os"
+	"strconv"
+	"strings"
 )
 
 // checks whether a file exists at the given path
@@ -16,4 +18,15 @@ func DoesFileExists(filePath string) bool {
 		return true
 	}
 	return false
+}
+
+// converts given comma separated numbers string to []int and returns it
+func CommaSeparatedStringToArray(str string) []int {
+	res := []int{}
+	for _, v := range strings.Split(str, ",") {
+		// parse string to integer
+		num, _ := strconv.Atoi(v)
+		res = append(res, num)
+	}
+	return res
 }

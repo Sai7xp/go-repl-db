@@ -7,6 +7,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -85,20 +86,55 @@ func checkAndCreateNewDb() {
 // user can use DB commands after entering this db shell
 func startREPL() {
 	fmt.Println("Welcome to REPL Shell")
+	// load existing from .wkn file
+	existingData, _ := os.ReadFile(".wkn")
+	// convert []byte data to map
+	json.Unmarshal(existingData, &database)
+
 	for {
 		fmt.Print("wkn>")
 		scaner := bufio.NewScanner(os.Stdin)
 		scaner.Scan()
 		replCommand := scaner.Text()
-		handleReplCommand(replCommand)
+		if len(replCommand) == 0 {
+			fmt.Println("OOPS! Command not found")
+		} else {
+			processUserCommand(replCommand)
+		}
 	}
 }
 
-func handleReplCommand(command string) {
-	switch command {
+// proces REPL commands
+func processUserCommand(command string) {
+	fields := strings.Fields(command)
+	fieldsLength := len(fields)
+
+	switch fields[0] {
 	case "exit":
+		fmt.Println("Bye!")
 		os.Exit(3)
+	case "new":
+		if fieldsLength > 2 {
+			parsedArray := CommaSeparatedStringToArray(fields[2])
+			CreateNewArray(fields[1], parsedArray)
+		} else if fieldsLength > 1 {
+			/// array with no elemnts
+			CreateNewArray(fields[1], []int{})
+		} else {
+			fmt.Printf("new is for creating a new array\n Usage:\n\tnew <array_name> 1,2,3,4\n")
+		}
+	case "show":
+		if fieldsLength > 1 {
+			GetArray(fields[1])
+		} else {
+			fmt.Printf("show is for fetching array details\n Usage:\n\tshow <array_name>\n")
+
+		}
+	case "del":
+		//TODO: delete array functionality
+	case "merge":
+		///TODO: merge two arrays functionality
 	default:
-		fmt.Println("OOPS! DB Command not found")
+		fmt.Printf("\"%s\" is not a supported operatoin\n", fields[0])
 	}
 }
