@@ -8,7 +8,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 )
 
 /*
@@ -26,10 +28,8 @@ Resources Used -
 func main() {
 
 	/// start a infinite loop
-	fmt.Println("Command: `wkn new` to create new db\nCommand: `wkn` to start the REPL ")
+	fmt.Println("Command: `wkn new` to create new db\nCommand: `wkn` to start the REPL\nCommand: `wkn --db-path ./<path_to_file>` to check whether file is valid or not")
 
-	// label [InfiniteLoop]
-InfiniteLoop:
 	for {
 		scaner := bufio.NewScanner(os.Stdin)
 		fmt.Print(">")
@@ -37,23 +37,30 @@ InfiniteLoop:
 		userInput := scaner.Text()
 
 		/// process user input
-		switch userInput {
-		case "wkn new":
+		inputSlice := strings.Fields(userInput)
+		if userInput == "wkn new" {
 			// to create new .wkn file
 			checkAndCreateNewDb()
-		case "wkn":
+		} else if userInput == "wkn" {
 			// to start the REPL
 			if DoesFileExists(".wkn") {
 				// 🎊 user can interact with REPL db now
 				startREPL()
-				break InfiniteLoop
+				break
 			} else {
 				fmt.Println("Create new db using `wkn new` command")
 			}
-
-		case "exit":
+		} else if len(inputSlice) > 2 && inputSlice[1] == "--db-path" {
+			if DoesFileExists(inputSlice[2]) {
+				fmt.Println("File is Valid. Starting the REPL")
+				startREPL()
+				break
+			} else {
+				log.Fatal("File is Corrupted")
+			}
+		} else if userInput == "exit" {
 			os.Exit(3)
-		default:
+		} else {
 			fmt.Println("OOPS! Command not found")
 		}
 	}
@@ -74,16 +81,16 @@ func checkAndCreateNewDb() {
 	}
 }
 
+// enter REPL shell
+// user can use DB commands after entering this db shell
 func startREPL() {
 	fmt.Println("Welcome to REPL Shell")
 	for {
 		fmt.Print("wkn>")
 		scaner := bufio.NewScanner(os.Stdin)
-		fmt.Print(">")
 		scaner.Scan()
-		userInput := scaner.Text()
-		handleReplCommand(userInput)
-
+		replCommand := scaner.Text()
+		handleReplCommand(replCommand)
 	}
 }
 
@@ -92,6 +99,6 @@ func handleReplCommand(command string) {
 	case "exit":
 		os.Exit(3)
 	default:
-		fmt.Println("OOPS! Command not found")
+		fmt.Println("OOPS! DB Command not found")
 	}
 }
