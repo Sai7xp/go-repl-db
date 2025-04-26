@@ -65,15 +65,33 @@ func DeleteArray(arrName string) {
 	}
 }
 
-// trigger when user enters `show array_name` command
-func GetArray(arrayName string) {
+// gets triggered when user enters `show array_name` command
+func GetArray(arrayName string) bool {
 	mx.Lock()
 	defer mx.Unlock()
 
 	if arr, doesExists := database[arrayName]; doesExists {
 		fmt.Println(arr)
+		return true
 	} else {
 		errMessage := fmt.Sprintf("Error: \"%s\" does not exist", arrayName)
 		fmt.Println(errMessage)
+		return false
 	}
+}
+
+func AppendElementsToArray(arrName string, newValues []int) {
+	defer WriteDataToFile()
+	mx.Lock()
+
+	arr, doesExists := database[arrName]
+	if !doesExists {
+		fmt.Println("Specified array doesn't exist")
+		return
+	}
+	arr = append(arr, newValues...)
+	database[arrName] = arr
+	fmt.Println("Values added to an existing array successfully")
+	mx.Unlock()
+	GetArray(arrName)
 }

@@ -17,14 +17,14 @@ import (
 /*
 // REPL - Read, Eval, Print, Loop
 
-# A REPL shell based db built using Go Lang
+# A REPL shell based db built using Go Lang.
+Takes single user input and reads it, evaluates it, print the result and then loop back to wait for the next input.
 
 It uses a single file to store everything, the goal is to have persistent data. The database can
-store integer arrays and perform some operations on them.
+store integer arrays as of now and perform some operations on them.
 
 Resources Used -
  1. https://www.digitalocean.com/community/tutorials/what-is-repl
-    2.
 */
 func main() {
 
@@ -85,7 +85,15 @@ func checkAndCreateNewDb() {
 // enter REPL shell
 // user can use DB commands after entering this db shell
 func startREPL() {
-	fmt.Println("Welcome to REPL Shell")
+	fmt.Println("=====================================")
+	fmt.Println("        Welcome to REPL Shell        ")
+	fmt.Println("=====================================")
+	fmt.Println("  new <array_name> 1,2,3,4   - Create new array")
+	fmt.Println("  show <array_name>          - Display an existing array")
+	fmt.Println("  add <array_name> 1,2,3     - Add elements to an existing array")
+	fmt.Println("  del <array_name>           - to delete the array")
+	fmt.Println("-------------------------------------")
+	fmt.Println("Note: Data will be loaded from .wkn file if available.")
 	// load existing from .wkn file
 	existingData, _ := os.ReadFile(".wkn")
 	// convert []byte data to map
@@ -134,6 +142,13 @@ func processUserCommand(command string) {
 			DeleteArray(fields[1])
 		} else {
 			fmt.Printf("del is for deleting array from database\n Usage:\n\tdel <array_name>\n")
+		}
+	case "add":
+		if fieldsLength == 3 {
+			parsedArray := CommaSeparatedStringToArray(fields[2])
+			AppendElementsToArray(fields[1], parsedArray)
+		} else {
+			fmt.Println("add <array_name> 1,2,3")
 		}
 
 	case "merge":
