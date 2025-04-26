@@ -45,7 +45,7 @@ func CreateNewArray(arrayName string, arr []int) {
 	if arrLength == 0 {
 		fmt.Println("CREATED")
 	} else {
-		fmt.Printf("CREATED (%d)\n", len(arr))
+		fmt.Printf("Created new array of len: (%d)\n", len(arr))
 	}
 
 }
@@ -82,7 +82,6 @@ func GetArray(arrayName string) bool {
 
 func AppendElementsToArray(arrName string, newValues []int) {
 	defer WriteDataToFile()
-	mx.Lock()
 
 	arr, doesExists := database[arrName]
 	if !doesExists {
@@ -90,8 +89,10 @@ func AppendElementsToArray(arrName string, newValues []int) {
 		return
 	}
 	arr = append(arr, newValues...)
+	mx.Lock()
 	database[arrName] = arr
-	fmt.Println("Values added to an existing array successfully")
 	mx.Unlock()
+	fmt.Println("Values added to an existing array successfully")
+
 	GetArray(arrName)
 }

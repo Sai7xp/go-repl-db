@@ -12,6 +12,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 /*
@@ -86,21 +88,22 @@ func checkAndCreateNewDb() {
 // user can use DB commands after entering this db shell
 func startREPL() {
 	fmt.Println("=====================================")
-	fmt.Println("        Welcome to REPL Shell        ")
+	color.New(color.FgGreen, color.Bold).Println("        Welcome to WKN REPL Shell    ")
 	fmt.Println("=====================================")
-	fmt.Println("  new <array_name> 1,2,3,4   - Create new array")
-	fmt.Println("  show <array_name>          - Display an existing array")
-	fmt.Println("  add <array_name> 1,2,3     - Add elements to an existing array")
-	fmt.Println("  del <array_name>           - to delete the array")
+	color.New(color.FgBlue, color.Bold).Println("  new <array_name> 1,2,3,4   - Create new array")
+	color.New(color.FgBlue, color.Bold).Println("  show <array_name>          - Display an existing array")
+	color.New(color.FgYellow, color.Bold).Println("  add <array_name> 1,2,3     - Add elements to an existing array")
+	color.New(color.FgRed, color.Bold).Println("  del <array_name>           - to delete the array")
 	fmt.Println("-------------------------------------")
 	fmt.Println("Note: Data will be loaded from .wkn file if available.")
+
 	// load existing from .wkn file
 	existingData, _ := os.ReadFile(".wkn")
 	// convert []byte data to map
 	json.Unmarshal(existingData, &database)
 
 	for {
-		fmt.Print("wkn>")
+		color.New(color.FgGreen, color.Bold).Print("wkn>")
 		scaner := bufio.NewScanner(os.Stdin)
 		scaner.Scan()
 		replCommand := scaner.Text()
@@ -154,6 +157,6 @@ func processUserCommand(command string) {
 	case "merge":
 		///TODO: merge two arrays functionality
 	default:
-		fmt.Printf("\"%s\" is not a supported operatoin\n", fields[0])
+		fmt.Printf("\"%s\" is not a supported operation\n", fields[0])
 	}
 }
